@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: soptcha
+
+  config:
+    activate:
+      on-profile: local
