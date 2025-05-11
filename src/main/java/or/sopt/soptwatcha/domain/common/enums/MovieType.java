@@ -1,5 +1,5 @@
 package or.sopt.soptwatcha.domain.common.enums;
 
-public enum Genre {
-    A
+public enum MovieType {
+    MOVIE,SERIES
 }
