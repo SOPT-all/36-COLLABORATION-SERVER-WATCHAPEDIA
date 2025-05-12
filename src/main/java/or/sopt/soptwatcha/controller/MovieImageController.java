@@ -17,8 +17,8 @@ public class MovieImageController {
     @PostMapping(path = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String save(@RequestParam("file") MultipartFile file,
                        @RequestParam("movieId") Long movieId) {
-        MovieImage uploadedImage = movieImageService.uploadImage("영화포스터",file,movieId);
-        return uploadedImage.getImageLink();
+
+        return movieImageService.uploadImage("영화포스터",file,movieId);
     }
 
 
