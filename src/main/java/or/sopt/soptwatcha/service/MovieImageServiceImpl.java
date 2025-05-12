@@ -1,25 +1,17 @@
 package or.sopt.soptwatcha.service;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import or.sopt.soptwatcha.domain.Movie;
 import or.sopt.soptwatcha.domain.MovieImage;
+import or.sopt.soptwatcha.dto.response.ImageUploadResponseDTO;
 import or.sopt.soptwatcha.repository.MovieImageRepository;
 import or.sopt.soptwatcha.repository.MovieRepository;
-import org.springframework.beans.factory.annotation.Value;
+import or.sopt.soptwatcha.util.S3Util;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Service
 @RequiredArgsConstructor
@@ -30,46 +22,32 @@ public class MovieImageServiceImpl {
     private final MovieImageRepository movieImageRepository;
     private final MovieRepository movieRepository;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-    private final AmazonS3 amazonS3;
+    private final S3Util s3Util;
 
 
-    public MovieImage uploadImage(String dirName, MultipartFile file,Long movieId) {
+    // 영화 포스터 이미지를 업로드 하는 API 입니다
+    public String uploadImage(String dirName, MultipartFile file,Long movieId) {
 
         Movie findMovie = findMovie(movieId);
 
-        String fileName = dirName + "/" + UUID.randomUUID() + "-" + file.getOriginalFilename();
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(file.getSize());
-        metadata.setContentType(file.getContentType());
-
-        String originalFileName = file.getOriginalFilename();
-
-        try {
-            log.info("이미지 업로드를 시작합니다");
-
-            amazonS3.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata));
-            log.info("이미지가 성공적으로 업로드 되었습니다");
-        } catch (AmazonServiceException e) {
-            throw new IllegalArgumentException("이미지 업로드에 실패하였습니다: " + fileName, e);
-        } catch (Exception e) {
-            throw new RuntimeException("이미지 업로드에 실패하였습니다: " + e.getMessage(), e);
-        }
-
-        String imagePath = amazonS3.getUrl(bucket, fileName).toString();
+        ImageUploadResponseDTO upload = s3Util.upload(dirName, file);
 
         MovieImage newImage = MovieImage.builder()
-                .imageLink(imagePath)
-                .fileName(fileName)
-                .imageName(originalFileName)
+                .imageLink(upload.getImagePath())
+                .fileName(upload.getFilename())
+                .imageName(upload.getOriginalFilename())
                 .movie(findMovie)
                 .build();
 
         movieImageRepository.save(newImage);
-        return newImage;
+        return newImage.getImageLink();
     }
 
+    /**
+     * FIXME
+     * 영화 포스터 이미지를 조회 하는 API 입니다
+     * -> 이는 추후 영화에서 영화이미지를 조회하여 imageLink를 가져오는 로직으로 리팩터링 됩니다
+     */
     public String findByFileName(String fileName) {
         MovieImage byFileName = movieImageRepository.findByFileName(fileName)
                 .orElseThrow(()-> new IllegalArgumentException("이미지를 찾지 못했습니다"));
