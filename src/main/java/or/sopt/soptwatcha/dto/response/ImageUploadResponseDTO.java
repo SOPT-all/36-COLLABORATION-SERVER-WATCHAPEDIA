@@ -5,7 +5,6 @@ import lombok.*;
 import java.awt.*;
 
 @Getter
-@RequiredArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
