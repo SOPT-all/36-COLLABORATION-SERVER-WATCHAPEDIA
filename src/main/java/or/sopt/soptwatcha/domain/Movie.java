@@ -3,7 +3,7 @@ package or.sopt.soptwatcha.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import or.sopt.soptwatcha.domain.common.BaseEntity;
-import or.sopt.soptwatcha.domain.common.enums.Genre;
+import or.sopt.soptwatcha.domain.common.enums.FilmCountry;
 import or.sopt.soptwatcha.domain.common.enums.MovieType;
 
 import java.time.LocalDate;
@@ -24,9 +24,6 @@ public class Movie extends BaseEntity {
 
     private String engTitle;
 
-    @Enumerated(EnumType.STRING)
-    private Genre genre;
-
     private LocalDate releaseYear;
 
     private int runningTime;
@@ -40,6 +37,9 @@ public class Movie extends BaseEntity {
     private String details;
 
     private int collectionCount;
+
+    @Enumerated(EnumType.STRING)
+    private FilmCountry filmCountry;
 
     @Enumerated(EnumType.STRING)
     private MovieType movieType;
