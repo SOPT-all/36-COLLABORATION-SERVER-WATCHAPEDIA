@@ -22,7 +22,7 @@ public class MovieImageController {
     public String save(@RequestParam("file") MultipartFile file,
                        @RequestParam("movieId") Long movieId) {
 
-        return movieImageService.uploadImage("영화포스터",file,movieId);
+        return movieImageService.uploadImage(file,movieId);
     }
 
 
