@@ -8,6 +8,7 @@ import or.sopt.soptwatcha.dto.response.ImageUploadResponseDTO;
 import or.sopt.soptwatcha.repository.MovieImageRepository;
 import or.sopt.soptwatcha.repository.MovieRepository;
 import or.sopt.soptwatcha.util.S3Util;
+import or.sopt.soptwatcha.util.constant.S3FileDirectoryName;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,8 +27,9 @@ public class MovieImageServiceImpl {
 
 
     // 영화 포스터 이미지를 업로드 하는 API 입니다
-    public String uploadImage(String dirName, MultipartFile file,Long movieId) {
+    public String uploadImage(MultipartFile file,Long movieId) {
 
+        String dirName = S3FileDirectoryName.MOVIE_IMAGE_DIRECTORY;
         Movie findMovie = findMovie(movieId);
 
         ImageUploadResponseDTO upload = s3Util.upload(dirName, file);
