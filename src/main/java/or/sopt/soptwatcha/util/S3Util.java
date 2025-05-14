@@ -48,3 +48,4 @@ public class S3Util {
         return ImageUploadResponseDTO.from(fileName,originalFileName,amazonS3.getUrl(bucket, fileName).toString());
     }
 }
+
