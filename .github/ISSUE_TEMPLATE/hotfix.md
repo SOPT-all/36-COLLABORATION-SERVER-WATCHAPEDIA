@@ -7,12 +7,16 @@ assignees: ''
 
 ---
 
-## Description
+## 📖 Description
 설명 작성
 
-## To - Do
+<br>
+
+## ✨ To - Do
 1.
 2.
 3.
 
-## ETC
+<br>
+
+## 🔎 ETC
