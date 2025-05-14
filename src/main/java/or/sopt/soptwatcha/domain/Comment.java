@@ -18,6 +18,12 @@ public class Comment extends BaseEntity {
 
     private String review;
 
+    private int score;
+
+    private int likeCount;
+
+    private int replyCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id")
     private Movie movie;
