@@ -15,6 +15,8 @@ public class Keyword {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String value;
+
     @Enumerated(EnumType.STRING)
     private Category category;
 }
