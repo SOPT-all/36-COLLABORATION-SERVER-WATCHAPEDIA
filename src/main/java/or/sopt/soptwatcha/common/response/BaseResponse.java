@@ -1,7 +1,7 @@
 package or.sopt.soptwatcha.common.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -11,6 +11,8 @@ public class BaseResponse<T> {
     private final Boolean success;
     private final int code;
     private final String message;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private final T data;
 
     private BaseResponse(Boolean success, int code, String message, T data) {

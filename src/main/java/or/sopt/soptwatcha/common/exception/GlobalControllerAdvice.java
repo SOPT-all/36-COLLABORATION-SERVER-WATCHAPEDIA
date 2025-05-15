@@ -1,5 +1,6 @@
 package or.sopt.soptwatcha.common.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import or.sopt.soptwatcha.common.response.BaseErrorResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatusCode;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import static or.sopt.soptwatcha.common.exception.ErrorCode.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalControllerAdvice {
     @ExceptionHandler(CustomException.class)
@@ -38,18 +40,25 @@ public class GlobalControllerAdvice {
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public BaseErrorResponse handle_HttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        return new BaseErrorResponse(METHOD_NOT_ALLOWED);
+    public ResponseEntity<BaseErrorResponse> handle_HttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        return ResponseEntity
+                .status(METHOD_NOT_ALLOWED.getHttpStatus())
+                .body(new BaseErrorResponse(METHOD_NOT_ALLOWED));
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    public BaseErrorResponse handle_NoHandlerFoundException(NoHandlerFoundException e){
-        return new BaseErrorResponse(API_NOT_FOUND);
+    public ResponseEntity<BaseErrorResponse> handle_NoHandlerFoundException(NoHandlerFoundException e){
+        return ResponseEntity
+                .status(API_NOT_FOUND.getHttpStatus())
+                .body(new BaseErrorResponse(API_NOT_FOUND));
     }
 
     @ExceptionHandler(Exception.class)
-    public BaseErrorResponse handle_InternalError(InternalError e) {
-        return new BaseErrorResponse(INTERNAL_SERVER_ERROR);
+    public ResponseEntity<BaseErrorResponse> handle_InternalError(Exception e) {
+        return ResponseEntity
+                .status(INTERNAL_SERVER_ERROR.getHttpStatus())
+                .body(new BaseErrorResponse(INTERNAL_SERVER_ERROR));
+
     }
 
 }

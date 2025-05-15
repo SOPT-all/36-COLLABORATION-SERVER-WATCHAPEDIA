@@ -2,7 +2,6 @@ package or.sopt.soptwatcha.common.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.Builder;
 import lombok.Getter;
 import or.sopt.soptwatcha.common.exception.ErrorCode;
 
@@ -19,7 +18,7 @@ public class BaseErrorResponse {
     private final LocalDateTime timestamp;
 
     public BaseErrorResponse(boolean success, int code, String message) {
-        this.success = false;
+        this.success = success;
         this.code = code;
         this.message = message;
         this.timestamp = LocalDateTime.now();
