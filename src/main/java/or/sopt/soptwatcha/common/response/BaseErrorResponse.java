@@ -2,14 +2,12 @@ package or.sopt.soptwatcha.common.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.Builder;
 import lombok.Getter;
 import or.sopt.soptwatcha.common.exception.ErrorCode;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
 @JsonPropertyOrder({"success", "code", "message", "timestamp", "errors"})
 public class BaseErrorResponse {
     private final boolean success;
