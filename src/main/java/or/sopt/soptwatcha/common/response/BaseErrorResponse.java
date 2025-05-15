@@ -1,45 +1,40 @@
 package or.sopt.soptwatcha.common.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.Builder;
+import lombok.Getter;
 import or.sopt.soptwatcha.common.exception.ErrorCode;
 
 import java.time.LocalDateTime;
 
+@Getter
 @JsonPropertyOrder({"success", "code", "message", "timestamp"})
 public class BaseErrorResponse {
     private final boolean success;
     private final int code;
     private final String message;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime timestamp;
 
-    public BaseErrorResponse(boolean success, int code, String message, LocalDateTime timestamp) {
+    public BaseErrorResponse(boolean success, int code, String message) {
         this.success = false;
         this.code = code;
         this.message = message;
-        this.timestamp = timestamp;
-    }
-
-    public BaseErrorResponse(ErrorCode errorCode) {
-        this.code = errorCode.getHttpStatus();
-        this.message = errorCode.getMessage();
-        this.success = false;
         this.timestamp = LocalDateTime.now();
     }
 
-    public boolean isSuccess() {
-        return success;
+    public BaseErrorResponse(ErrorCode errorCode) {
+        this(false, errorCode.getHttpStatus(), errorCode.getMessage());
     }
 
-    public int getCode() {
-        return code;
+    public static BaseErrorResponse of(boolean success, int code, String message) {
+        return new BaseErrorResponse(success, code, message);
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public static BaseErrorResponse of(ErrorCode errorCode) {
+        return new BaseErrorResponse(errorCode);
     }
 
 }

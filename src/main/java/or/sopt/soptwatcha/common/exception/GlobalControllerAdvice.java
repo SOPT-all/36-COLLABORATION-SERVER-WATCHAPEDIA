@@ -31,8 +31,7 @@ public class GlobalControllerAdvice {
         BaseErrorResponse response = new BaseErrorResponse(
                 false,
                 BAD_REQUEST.value(),
-                message,
-                java.time.LocalDateTime.now()
+                message
         );
 
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(BAD_REQUEST.value()));
