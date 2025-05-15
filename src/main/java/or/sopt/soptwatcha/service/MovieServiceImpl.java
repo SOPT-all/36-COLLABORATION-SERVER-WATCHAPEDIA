@@ -1,9 +1,27 @@
 package or.sopt.soptwatcha.service;
 
+import lombok.RequiredArgsConstructor;
+import or.sopt.soptwatcha.domain.Keyword;
+import or.sopt.soptwatcha.domain.UpperCategory;
+import or.sopt.soptwatcha.domain.common.enums.IsPositive;
+import or.sopt.soptwatcha.repository.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
+@RequiredArgsConstructor
 public class MovieServiceImpl implements MovieService {
+
+    private final MovieRepository movieRepository;
+    private final CommentRepository commentRepository;
+    private final CommentKeywordRepository commentKeywordRepository;
+    private final KeywordRepository keywordRepository;
+    private final MovieImageRepository movieImageRepository;
+    private final MovieKeywordRepository movieKeywordRepository;
 
 
     public void getPreferenceMovies(){
@@ -27,7 +45,29 @@ public class MovieServiceImpl implements MovieService {
          *  5. movieImageRepository
          *  6. movieKeywordRepsoitory
          * */
+    }
+
+    public List<Keyword> getPositive(List<Keyword> keywords) {
+        return keywords.stream()
+                .filter(keyword -> keyword.getIsPositive() == IsPositive.POSITIVE)
+                .toList();
+    }
 
 
+    public List<Keyword> getPriorityOrderedKeywords(List<Keyword> keywords) {
+        // 1. 우선순위 기준 맵 정의
+        Map<UpperCategory, Integer> priorityMap = Map.of(
+                UpperCategory.EMOTION_IMPRESSION, 1,
+                UpperCategory.RECOMMENDED_FOR, 2,
+                UpperCategory.DIRECTION_STYLE, 3,
+                UpperCategory.CONSTRUCTOR_STORY, 4,
+                UpperCategory.CHARACTER_ACTOR, 5
+        );
+
+        // 2. 정렬 수행 (우선순위 오름차순)
+        return keywords.stream()
+                .sorted(Comparator.comparingInt(k ->
+                        priorityMap.getOrDefault(k.getUpperCategory(), Integer.MAX_VALUE)))
+                .collect(Collectors.toList());
     }
 }
