@@ -123,111 +123,6 @@ class MovieServiceImplTest {
 
 
     @Test
-    @DisplayName("getPreferenceMoviesResponses()는 키워드에 매핑된 영화들을 반환한다")
-    void getPreferenceMoviesResponses_success() {
-        // given
-        Keyword keyword = Keyword.builder()
-                .value("레전드")
-                .isPositive(IsPositive.POSITIVE)
-                .upperCategory(UpperCategory.DIRECTION_STYLE)
-                .category(Category.MOVIE_KEYWORD)
-                .build();
-
-        Movie movie1 = Movie.builder()
-                .title("진짜 합세 짱이다")
-                .build();
-
-        Movie movie2 = Movie.builder()
-                .title("진짜 대박이야")
-                .build();
-
-        MovieKeyword mk1 = MovieKeyword.builder()
-                .keyword(keyword)
-                .movie(movie1)
-                .build();
-
-        MovieKeyword mk2 = MovieKeyword.builder()
-                .keyword(keyword)
-                .movie(movie2)
-                .build();
-
-        List<MovieKeyword> mockResult = List.of(mk1, mk2);
-
-        // mock 설정
-        when(movieKeywordRepository.findByKeyword(keyword)).thenReturn(mockResult);
-
-        // when
-        List<GetPreferenceMoviesResponse> responses = movieService.getPreferenceMoviesResponses(keyword);
-
-        // then
-        assertEquals(2, responses.size());
-        assertEquals("진짜 합세 짱이다", responses.get(0).getTitle());
-        assertEquals("진짜 대박이야", responses.get(1).getTitle());
-    }
-
-
-    @Test
-    @DisplayName("getPreferenceMovies()는 댓글 ID에 따른 영화 추천 리스트를 반환한다")
-    void getPreferenceMovies_success() {
-        // given
-        Long commentId = 1L;
-
-        Comment comment = Comment.builder()
-                .id(commentId)
-                .review("이 영화 진짜 대박")
-                .build();
-
-        Keyword keyword1 = Keyword.builder()
-                .value("연출 미쳤다")
-                .isPositive(IsPositive.POSITIVE)
-                .upperCategory(UpperCategory.DIRECTION_STYLE)
-                .category(Category.MOVIE_KEYWORD)
-                .build();
-
-        Keyword keyword2 = Keyword.builder()
-                .value("배우 몰입감")
-                .isPositive(IsPositive.POSITIVE)
-                .upperCategory(UpperCategory.CHARACTER_ACTOR)
-                .category(Category.MOVIE_KEYWORD)
-                .build();
-
-        CommentKeyword ck1 = CommentKeyword.builder()
-                .comment(comment)
-                .keyword(keyword1)
-                .build();
-
-        CommentKeyword ck2 = CommentKeyword.builder()
-                .comment(comment)
-                .keyword(keyword2)
-                .build();
-
-        Movie movie1 = Movie.builder().title("영화A").build();
-        Movie movie2 = Movie.builder().title("영화B").build();
-
-        MovieKeyword mk1 = MovieKeyword.builder().movie(movie1).keyword(keyword1).build();
-        MovieKeyword mk2 = MovieKeyword.builder().movie(movie2).keyword(keyword2).build();
-
-        // mock 설정
-        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
-        when(commentKeywordRepository.findByComment(comment)).thenReturn(List.of(ck1, ck2));
-        when(movieKeywordRepository.findByKeyword(keyword1)).thenReturn(List.of(mk1));
-        when(movieKeywordRepository.findByKeyword(keyword2)).thenReturn(List.of(mk2));
-
-        // when
-        GetPreferenceMoviesListResponse response = movieService.getPreferenceMovies(commentId);
-
-        // then
-        assertEquals(2, response.getResult().size());
-
-        List<GetPreferenceMoviesResponse> group1 = response.getResult().get(0);
-        List<GetPreferenceMoviesResponse> group2 = response.getResult().get(1);
-
-        assertEquals("영화A", group1.get(0).getTitle());
-        assertEquals("영화B", group2.get(0).getTitle());
-    }
-
-
-    @Test
     @DisplayName("getPreferenceMovies() 실행 시, 긍정 키워드가 없으면 recommendIfNotExist가 호출된다")
     void recommendIfNotExist_is_called_when_no_positive_keywords() {
         // given
@@ -255,6 +150,66 @@ class MovieServiceImplTest {
 
 
     @Test
+    @DisplayName("getPreferenceMovies()는 댓글 ID에 따른 영화 추천 리스트를 반환한다")
+    void getPreferenceMovies_success() {
+        // given
+        Long commentId = 1L;
+
+        // 댓글과 키워드
+        Comment baseComment = Comment.builder()
+                .id(commentId)
+                .review("이 영화 진짜 대박")
+                .build();
+
+        Keyword keyword1 = Keyword.builder()
+                .value("연출 미쳤다")
+                .isPositive(IsPositive.POSITIVE)
+                .upperCategory(UpperCategory.DIRECTION_STYLE)
+                .category(Category.MOVIE_KEYWORD)
+                .build();
+
+        Keyword keyword2 = Keyword.builder()
+                .value("배우 몰입감")
+                .isPositive(IsPositive.POSITIVE)
+                .upperCategory(UpperCategory.CHARACTER_ACTOR)
+                .category(Category.MOVIE_KEYWORD)
+                .build();
+
+        // 댓글에 연결된 키워드들
+        CommentKeyword ck1 = CommentKeyword.builder().comment(baseComment).keyword(keyword1).build();
+        CommentKeyword ck2 = CommentKeyword.builder().comment(baseComment).keyword(keyword2).build();
+
+        // 키워드1과 관련된 다른 코멘트들 (그 안에 영화 연결)
+        Movie movie1 = Movie.builder().title("영화A").build();
+        Comment comment1 = Comment.builder().movie(movie1).build();
+        CommentKeyword relatedCK1 = CommentKeyword.builder().comment(comment1).keyword(keyword1).build();
+
+        // 키워드2와 관련된 다른 코멘트들
+        Movie movie2 = Movie.builder().title("영화B").build();
+        Comment comment2 = Comment.builder().movie(movie2).build();
+        CommentKeyword relatedCK2 = CommentKeyword.builder().comment(comment2).keyword(keyword2).build();
+
+        // mock 설정
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(baseComment));
+        when(commentKeywordRepository.findByComment(baseComment)).thenReturn(List.of(ck1, ck2));
+        when(commentKeywordRepository.findByKeyword(keyword1)).thenReturn(List.of(relatedCK1));
+        when(commentKeywordRepository.findByKeyword(keyword2)).thenReturn(List.of(relatedCK2));
+
+        // when
+        GetPreferenceMoviesListResponse response = movieService.getPreferenceMovies(commentId);
+
+        // then
+        assertEquals(2, response.getResult().size());
+
+        List<GetPreferenceMoviesResponse> group1 = response.getResult().get(0);
+        List<GetPreferenceMoviesResponse> group2 = response.getResult().get(1);
+
+        assertEquals("영화A", group1.get(0).getTitle());
+        assertEquals("영화B", group2.get(0).getTitle());
+    }
+
+
+    @Test
     @DisplayName("getPreferenceMovies() 실행 시, 존재하지 않는 commentId로 요청하면 CustomException이 발생한다")
     void getPreferenceMovies_throwsException_whenCommentNotFound() {
         // given
@@ -267,5 +222,34 @@ class MovieServiceImplTest {
         });
 
         assertEquals(ErrorCode.COMMENT_NOT_FOUND, exception.getErrorCode());
+    }
+
+
+    @DisplayName("getMoviesByKeyword()는 키워드에 해당하는 영화들을 GetPreferenceMoviesResponse로 반환한다")
+    @Test
+    void getMoviesByKeyword_returnsDtoList() {
+        // given
+        Keyword keyword = Keyword.builder().id(1L).value("스릴러").build();
+
+        Movie movie1 = Movie.builder().id(1L).title("기생충").build();
+        Movie movie2 = Movie.builder().id(2L).title("올드보이").build();
+
+        Comment comment1 = Comment.builder().id(1L).movie(movie1).build();
+        Comment comment2 = Comment.builder().id(2L).movie(movie2).build();
+
+        CommentKeyword ck1 = CommentKeyword.builder().comment(comment1).keyword(keyword).build();
+        CommentKeyword ck2 = CommentKeyword.builder().comment(comment2).keyword(keyword).build();
+
+        List<CommentKeyword> commentKeywords = List.of(ck1, ck2);
+
+        when(commentKeywordRepository.findByKeyword(keyword)).thenReturn(commentKeywords);
+
+        // when
+        List<GetPreferenceMoviesResponse> result = movieService.getMoviesByKeyword(keyword);
+
+        // then
+        assertEquals(2, result.size());
+        assertEquals("기생충", result.get(0).getTitle());
+        assertEquals("올드보이", result.get(1).getTitle());
     }
 }
