@@ -1,6 +1,8 @@
 package or.sopt.soptwatcha.service;
 
 import lombok.RequiredArgsConstructor;
+import or.sopt.soptwatcha.common.exception.CustomException;
+import or.sopt.soptwatcha.common.exception.ErrorCode;
 import or.sopt.soptwatcha.domain.*;
 import or.sopt.soptwatcha.domain.common.enums.IsPositive;
 import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesListResponse;
@@ -43,7 +45,7 @@ public class MovieServiceImpl implements MovieService {
     public GetPreferenceMoviesListResponse getPreferenceMovies(Long commentId) {
 
         Comment findComment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 코멘트를 찾을 수 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
 
         List<CommentKeyword> byComment = commentKeywordRepository.findByComment(findComment);
 
@@ -74,6 +76,7 @@ public class MovieServiceImpl implements MovieService {
 
         List<MovieKeyword> byKeyword = movieKeywordRepository.findByKeyword(keyword);
 
+        // 응답 DTO 수정되어야함 FIXME
         return byKeyword.stream()
                 .map(MovieKeyword::getMovie)
                 .map(GetPreferenceMoviesResponse::of)

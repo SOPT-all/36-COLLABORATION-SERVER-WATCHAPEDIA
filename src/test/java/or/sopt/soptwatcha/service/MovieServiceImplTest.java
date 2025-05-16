@@ -1,5 +1,7 @@
 package or.sopt.soptwatcha.service;
 
+import or.sopt.soptwatcha.common.exception.CustomException;
+import or.sopt.soptwatcha.common.exception.ErrorCode;
 import or.sopt.soptwatcha.domain.*;
 import or.sopt.soptwatcha.domain.common.enums.Category;
 import or.sopt.soptwatcha.domain.common.enums.IsPositive;
@@ -253,17 +255,17 @@ class MovieServiceImplTest {
 
 
     @Test
-    @DisplayName("getPreferenceMovies() 실행 시, 존재하지 않는 commentId로 요청하면 예외가 발생한다")
+    @DisplayName("getPreferenceMovies() 실행 시, 존재하지 않는 commentId로 요청하면 CustomException이 발생한다")
     void getPreferenceMovies_throwsException_whenCommentNotFound() {
         // given
         Long commentId = 999L;
         when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CustomException exception = assertThrows(CustomException.class, () -> {
             movieService.getPreferenceMovies(commentId);
         });
 
-        assertEquals("해당하는 코멘트를 찾을 수 없습니다", exception.getMessage());
+        assertEquals(ErrorCode.COMMENT_NOT_FOUND, exception.getErrorCode());
     }
 }
