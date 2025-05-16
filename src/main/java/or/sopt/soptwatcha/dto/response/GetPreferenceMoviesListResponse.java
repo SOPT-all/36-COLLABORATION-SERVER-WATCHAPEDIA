@@ -15,11 +15,11 @@ import java.util.List;
 @Builder
 public class GetPreferenceMoviesListResponse {
 
-    private List<List<GetPreferenceMoviesResponse>> result;
+    private List<KeywordRecommendationGroupResponse> preferenceMovies;
 
-    public static GetPreferenceMoviesListResponse of(List<List<GetPreferenceMoviesResponse>> responses) {
+    public static GetPreferenceMoviesListResponse of(List<KeywordRecommendationGroupResponse> groups) {
         return GetPreferenceMoviesListResponse.builder()
-                .result(responses)
+                .preferenceMovies(groups)
                 .build();
     }
 }

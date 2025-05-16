@@ -5,8 +5,11 @@ import or.sopt.soptwatcha.common.exception.CustomException;
 import or.sopt.soptwatcha.common.exception.ErrorCode;
 import or.sopt.soptwatcha.domain.*;
 import or.sopt.soptwatcha.domain.common.enums.IsPositive;
+import or.sopt.soptwatcha.domain.common.enums.MovieImageType;
 import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesListResponse;
 import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesResponse;
+import or.sopt.soptwatcha.dto.response.KeywordRecommendationGroupResponse;
+import or.sopt.soptwatcha.dto.response.KeywordResponseDTO;
 import or.sopt.soptwatcha.repository.*;
 import org.springframework.stereotype.Service;
 
@@ -50,43 +53,55 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public GetPreferenceMoviesListResponse getPreferenceMovies(Long commentId) {
 
-        // 댓글을 찾고
         Comment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
 
-        // 그 댓글과 키워드의 매핑 테이블들을 찾는다 (키워드가 여러개일 수 있어서 List)
         List<CommentKeyword> byComment = commentKeywordRepository.findByComment(findComment);
 
-        // 그리고 거기서 키워드를 추출하고
         List<Keyword> keywords = byComment.stream()
                 .map(CommentKeyword::getKeyword)
                 .toList();
 
-        // 긍정 키워드를 추출한다 -> 만약 긍정 키워드가 존재하지 않으면 recommendIfNotExist 로직 실행
         List<Keyword> positiveKeywords = getPositive(keywords);
         if (positiveKeywords.isEmpty()) {
             recommendIfNotExist();
         }
 
-        // 추출된 긍정 키워드들을 우선순위대로 재배치하고
         List<Keyword> priorityOrderedKeywords = getPriorityOrderedKeywords(positiveKeywords);
 
-        // 같은 키워드로 평가한 댓글을 찾고 그 댓글들이 평가한 영화들을 찾는다 -> 그 영화들을 List<ResponseDTO>로 묶어서 2차원 리스트로 반환
-        List<List<GetPreferenceMoviesResponse>> result = priorityOrderedKeywords.stream()
-                .map(this::getMoviesByKeyword)
-                .toList();
+        List<KeywordRecommendationGroupResponse> groupedResult = new ArrayList<>();
 
-        // 그걸 DTO 에 담아서 최종 반환한다
-        return GetPreferenceMoviesListResponse.of(result);
+        for (Keyword keyword : priorityOrderedKeywords) {
+            List<Movie> movieList = getMoviesByKeyword(keyword);
+
+            List<GetPreferenceMoviesResponse> dtoList = movieList.stream()
+                    .map(movie -> {
+                        MovieImage mainImage = movie.getMovieImages().stream()
+                                .filter(img -> img.getMovieImageType() == MovieImageType.POSTER)
+                                .findFirst()
+                                .orElseThrow(() -> new IllegalArgumentException("영화에 해당하는 이미지가 존재하지 않습니다"));
+
+                        List<KeywordResponseDTO> movieKeywords = movie.getMovieKeywords().stream()
+                                .map(MovieKeyword::getKeyword)
+                                .map(KeywordResponseDTO::of)
+                                .toList();
+
+                        return GetPreferenceMoviesResponse.of(movie, mainImage, movieKeywords);
+                    })
+                    .toList();
+
+            String description = makeRankingDescription(keyword); // 설명 필드 생성
+
+            groupedResult.add(
+                    KeywordRecommendationGroupResponse.builder()
+                            .description(description)
+                            .movies(dtoList)
+                            .build()
+            );
+        }
+
+        return GetPreferenceMoviesListResponse.of(groupedResult);
     }
-
-
-
-
-
-
-
-
 
 
 
@@ -95,7 +110,7 @@ public class MovieServiceImpl implements MovieService {
 
     //-------------helper method----------------------------------------------------------//
 
-    public List<GetPreferenceMoviesResponse> getMoviesByKeyword(Keyword keyword) {
+    public List<Movie> getMoviesByKeyword(Keyword keyword) {
 
         // 우선순위 정렬된 키워드를 대상으로 해당 키워드를 갖고 있는 키워드 코멘트들을 찾는다 -> List<KeywordComment> 가 반환될거임
         List<CommentKeyword> byKeyword = commentKeywordRepository.findByKeyword(keyword);
@@ -106,14 +121,9 @@ public class MovieServiceImpl implements MovieService {
                 .toList();
 
         // 그리고 그 코멘트들이 평가한 영화를 찾는다 -> List<Movie>
-        List<Movie> movies = comments.stream()
+        return comments.stream()
                 .map(Comment::getMovie)
                 .distinct()
-                .toList();
-
-        // DTO로 감싼다
-        return movies.stream()
-                .map(GetPreferenceMoviesResponse::of)
                 .toList();
     }
 
@@ -145,5 +155,48 @@ public class MovieServiceImpl implements MovieService {
                 .sorted(Comparator.comparingInt(k ->
                         priorityMap.getOrDefault(k.getUpperCategory(), Integer.MAX_VALUE)))
                 .collect(Collectors.toList());
+    }
+
+
+    private String makeRankingDescription(Keyword keyword) {
+        return switch (keyword.getValue()) {
+            // 구성/스토리
+            case "스토리가 탄탄해" -> "구성에 빠진 00님을 위한 작품";
+            case "전개가 흥미진진했어요" -> "흥미진진한 다음 전개가 궁금한 작품들";
+            case "설정이 참신했어요" -> "새로움이 가득한 작품이 땡기는 날";
+
+            // 연출/스타일
+            case "연출이 훌륭해요" -> "연출 맛집을 찾는다면";
+            case "미장센이 아름다워요" -> "눈과 예술의 작품들";
+            case "음악이 좋았어요" -> "귀가 호강하는 작품 추천";
+            case "대사가 인상적이에요" -> "인상적인 대사에 꽂힌 00님께";
+            case "작화/영상미가 뛰어나요" -> "뛰어난 영상미로 호평 받은 작품 추천";
+            case "스타일리시해요" -> "스타일리시한 작품을 좋아하는 00님을 위한 작품";
+
+            // 캐릭터/배우
+            case "캐릭터가 매력적이에요" -> "매력적인 캐릭터를 찾는다면";
+            case "관계성이 좋아요" -> "인물 간 케미 폭발하는 작품";
+            case "연기력이 훌륭해요" -> "연기력에 몰입한 00님을 위한 작품";
+            case "캐릭터에 감정이입 했어요" -> "감정이입 200% 작품";
+
+            // 감정/인상
+            case "힐링돼요" -> "00님의 힐링을 위한 작품";
+            case "감동적이에요" -> "눈물 한 방울의 여운 작품 모음";
+            case "반전이 있어요" -> "반전에 놀라고 싶을 때";
+            case "설레요" -> "설렘 가득한 이야기";
+            case "웃겨요" -> "웃고 싶을 때 추천";
+            case "울컥했어요" -> "울컥주의! 감정폭발";
+            case "잔잔해요" -> "잔잔한 여운이 남는";
+            case "몰입감이 최고예요" -> "정주행 각, 몰입 100%";
+            case "생각이 많아졌어요" -> "여운과 질문을 주는";
+
+            // 추천 대상
+            case "혼자" -> "혼자만의 시간을 위한 추천작";
+            case "친구랑" -> "친구와 함께 보면 좋은";
+            case "가족이랑" -> "가족과 보기 좋은 이야기";
+            case "연인이랑" -> "연인과 함께라면 더 좋아";
+
+            default -> "추천 작품 모음";
+        };
     }
 }
