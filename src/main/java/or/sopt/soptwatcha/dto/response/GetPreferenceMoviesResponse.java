@@ -43,6 +43,14 @@ public class GetPreferenceMoviesResponse {
     public static class GetPreferenceMoviesGroupDTO {
         private String description;
         private List<GetPreferenceMoviesResponse> movies;
+
+        public static GetPreferenceMoviesGroupDTO of(String description, List<GetPreferenceMoviesResponse> movies) {
+
+            return GetPreferenceMoviesGroupDTO.builder()
+                    .description(description)
+                    .movies(movies)
+                    .build();
+        }
     }
 
     @Getter
