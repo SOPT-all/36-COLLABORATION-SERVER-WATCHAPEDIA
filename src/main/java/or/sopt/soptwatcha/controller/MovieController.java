@@ -19,12 +19,11 @@ import org.springframework.web.bind.annotation.*;
 public class MovieController {
 
     private final MovieService movieService;
-    private final MovieServiceImpl movieServiceImpl;
-    
+
     @GetMapping("/{postId}")
     @Operation(summary = "영화 상세 정보 조회 API")
     public BaseResponse<MovieDetailResponseDTO> getMovieDetail(@PathVariable Long postId) {
-        MovieDetailResponseDTO response = movieServiceImpl.getMovieDetail(postId);
+        MovieDetailResponseDTO response = movieService.getMovieDetail(postId);
         return BaseResponse.ok(response);
     }
 
