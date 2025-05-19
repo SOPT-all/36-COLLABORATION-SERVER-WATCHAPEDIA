@@ -25,7 +25,23 @@ public class MovieServiceImpl implements MovieService {
     private final CommentRepository commentRepository;
     private final CommentKeywordRepository commentKeywordRepository;
     private final MovieRepository movieRepository;
+    private final MovieGenreRepository movieGenreRepository;
+    private final MovieArtistRepository movieArtistRepository;
+    private final MovieImageRepository movieImageRepository;
 
+    
+    @Override
+    @Transactional(readOnly = true)
+    public MovieDetailResponseDTO getMovieDetail(Long movieId) {
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_REQUEST, "해당 영화를 찾을 수 없습니다."));
+
+        List<MovieGenre> movieGenres = movieGenreRepository.findAllByMovie(movie);
+        List<MovieArtist> movieArtists = movieArtistRepository.findAllByMovie(movie);
+        List<MovieImage> movieImages = movieImageRepository.findAllByMovie(movie);
+
+        return MovieDetailResponseDTO.from(movie, movieGenres, movieArtists, movieImages);
+    }
 
     @Override
     @Transactional(readOnly = true)
