@@ -24,9 +24,9 @@ public class GetPreferenceMoviesResponse {
 
     private double score;
 
-    private List<KeywordResponseDTO> keyword;
+    private List<GetPreferenceMoviesKeywordResponseDTO> keyword;
 
-    public static GetPreferenceMoviesResponse of(Movie movie, MovieImage movieImage, List<KeywordResponseDTO> movieKeyword) {
+    public static GetPreferenceMoviesResponse of(Movie movie, MovieImage movieImage, List<GetPreferenceMoviesKeywordResponseDTO> movieKeyword) {
         return GetPreferenceMoviesResponse.builder()
                 .id(movie.getId())
                 .imagePath(movieImage.getImageLink())
@@ -35,4 +35,37 @@ public class GetPreferenceMoviesResponse {
                 .keyword(movieKeyword)
                 .build();
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class GetPreferenceMoviesGroupDTO {
+        private String description;
+        private List<GetPreferenceMoviesResponse> movies;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class GetPreferenceMoviesResponseWrapper {
+        private List<GetPreferenceMoviesGroupDTO> preferenceMovies;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class GetPreferenceMoviesKeywordResponseDTO {
+
+        private String keyword;
+
+        public static GetPreferenceMoviesKeywordResponseDTO of(Keyword keyword) {
+            return GetPreferenceMoviesKeywordResponseDTO.builder()
+                    .keyword(keyword.getValue())
+                    .build();
+        }
+    }
+
 }
