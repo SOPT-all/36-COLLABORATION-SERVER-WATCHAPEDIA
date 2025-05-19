@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import or.sopt.soptwatcha.common.response.BaseResponse;
 import or.sopt.soptwatcha.dto.response.GetMovieSoonResponseDTO;
 import or.sopt.soptwatcha.dto.response.GetMovieTopRankingResponseDTO;
-import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesListResponse;
 import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesResponse;
 import or.sopt.soptwatcha.service.MovieService;
 import org.springframework.web.bind.annotation.*;

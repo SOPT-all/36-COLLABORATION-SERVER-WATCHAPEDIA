@@ -27,60 +27,6 @@ public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
 
 
-    @Override
-    @Transactional(readOnly = true)
-    public GetPreferenceMoviesListResponse getPreferenceMovies(Long commentId) {
-
-        Comment findComment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
-
-        List<CommentKeyword> byComment = commentKeywordRepository.findByComment(findComment);
-
-        List<Keyword> keywords = byComment.stream()
-                .map(CommentKeyword::getKeyword)
-                .toList();
-
-        List<Keyword> positiveKeywords = getPositive(keywords);
-        if (positiveKeywords.isEmpty()) {
-            recommendIfNotExist();
-        }
-
-        List<Keyword> priorityOrderedKeywords = getPriorityOrderedKeywords(positiveKeywords);
-
-        List<KeywordRecommendationGroupResponse> groupedResult = new ArrayList<>();
-
-        for (Keyword keyword : priorityOrderedKeywords) {
-            List<Movie> movieList = getMoviesByKeyword(keyword);
-
-            List<GetPreferenceMoviesResponse> dtoList = movieList.stream()
-                    .map(movie -> {
-                        MovieImage mainImage = movie.getMovieImages().stream()
-                                .filter(img -> img.getMovieImageType() == MovieImageType.POSTER)
-                                .findFirst()
-                                .orElseThrow(() -> new IllegalArgumentException("영화에 해당하는 이미지가 존재하지 않습니다"));
-
-                        List<GetPreferenceMoviesResponse.GetPreferenceMoviesKeywordResponseDTO> movieKeywords = movie.getMovieKeywords().stream()
-                                .map(MovieKeyword::getKeyword)
-                                .map(GetPreferenceMoviesResponse.GetPreferenceMoviesKeywordResponseDTO::of)
-                                .toList();
-
-                        return GetPreferenceMoviesResponse.of(movie, mainImage, movieKeywords);
-                    })
-                    .toList();
-
-            String description = makeRankingDescription(keyword); // 설명 필드 생성
-
-            groupedResult.add(
-                    KeywordRecommendationGroupResponse.builder()
-                            .description(description)
-                            .movies(dtoList)
-                            .build()
-            );
-        }
-
-        return GetPreferenceMoviesListResponse.of(groupedResult);
-    }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -225,23 +171,6 @@ public class MovieServiceImpl implements MovieService {
 
 
     //-------------helper method----------------------------------------------------------//
-
-    public List<Movie> getMoviesByKeyword(Keyword keyword) {
-
-        // 우선순위 정렬된 키워드를 대상으로 해당 키워드를 갖고 있는 키워드 코멘트들을 찾는다 -> List<KeywordComment> 가 반환될거임
-        List<CommentKeyword> byKeyword = commentKeywordRepository.findByKeyword(keyword);
-
-        // 그리고 그 키워드 코멘트들의 코멘트를 찾는다 -> List<Comment>
-        List<Comment> comments = byKeyword.stream()
-                .map(CommentKeyword::getComment)
-                .toList();
-
-        // 그리고 그 코멘트들이 평가한 영화를 찾는다 -> List<Movie>
-        return comments.stream()
-                .map(Comment::getMovie)
-                .distinct()
-                .toList();
-    }
 
 
     public List<Keyword> getPositive(List<Keyword> keywords) {
