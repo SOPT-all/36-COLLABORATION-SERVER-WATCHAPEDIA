@@ -3,6 +3,7 @@ package or.sopt.soptwatcha.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import or.sopt.soptwatcha.dto.response.GetMovieTopRankingResponseDTO;
 import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesListResponse;
 import or.sopt.soptwatcha.service.MovieService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,5 +25,12 @@ public class MovieController {
     public GetPreferenceMoviesListResponse getPreferenceMovies(@PathVariable Long commentId) {
 
         return movieService.getPreferenceMovies(commentId);
+    }
+
+    @GetMapping("posts/ranking")
+    @Operation(summary = "내가 좋아할 만한 작품 랭킹 API")
+    public GetMovieTopRankingResponseDTO.GetMovieTopRankingResponseListDTO getRankingMovies() {
+
+        return movieService.getMovieTopRanking();
     }
 }
