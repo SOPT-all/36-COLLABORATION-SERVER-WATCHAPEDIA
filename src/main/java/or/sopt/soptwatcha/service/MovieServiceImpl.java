@@ -10,6 +10,8 @@ import or.sopt.soptwatcha.domain.common.enums.MovieImageType;
 import or.sopt.soptwatcha.domain.common.enums.UpperCategory;
 import or.sopt.soptwatcha.dto.response.*;
 import or.sopt.soptwatcha.repository.*;
+import or.sopt.soptwatcha.util.KeywordUtil;
+import or.sopt.soptwatcha.util.KeywordUtilImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +31,9 @@ public class MovieServiceImpl implements MovieService {
     private final MovieArtistRepository movieArtistRepository;
     private final MovieImageRepository movieImageRepository;
 
-    
+    private final KeywordUtil keywordUtil;
+
+
     @Override
     @Transactional(readOnly = true)
     public MovieDetailResponseDTO getMovieDetail(Long movieId) {
@@ -52,10 +56,10 @@ public class MovieServiceImpl implements MovieService {
         List<Keyword> keywords = getKeywordsByComment(commentId);
 
         // 댓글의 키워드 중 긍정과 부정을 필터링 한다
-        List<Keyword> positiveKeywords = getPositive(keywords);
+        List<Keyword> positiveKeywords = keywordUtil.getPositive(keywords);
 
         // 긍정의 키워드들에서 우선순위대로 재정렬한다 (이때 우선순위는 상위 키워드로 진행한다)
-        List<Keyword> priorityOrderedKeywords = getPriorityOrderedKeywords(positiveKeywords);
+        List<Keyword> priorityOrderedKeywords = keywordUtil.getPriorityOrderedKeywords(positiveKeywords);
 
         List<GetPreferenceMoviesResponse.GetPreferenceMoviesGroupDTO> grouped = priorityOrderedKeywords.stream()
                 .map(keyword -> {
@@ -79,7 +83,7 @@ public class MovieServiceImpl implements MovieService {
                             .toList();
 
                     // description은 키워드 하위 카테고리 기반 예시 생성
-                    String description = makeRankingDescription(keyword);
+                    String description = keywordUtil.makeRankingDescription(keyword);
 
                     // description을 포함한 DTO로 정리하고 그것까지 포함한 리스트로 반환한다
                     return GetPreferenceMoviesResponse.GetPreferenceMoviesGroupDTO.of(description,movies);
