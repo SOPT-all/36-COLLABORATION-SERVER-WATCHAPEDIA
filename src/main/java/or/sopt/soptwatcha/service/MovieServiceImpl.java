@@ -163,7 +163,7 @@ public class MovieServiceImpl implements MovieService {
 
 
     public void recommendIfNotExist(){
-        throw new IllegalArgumentException("긍정 키워드가 존재하지 않습니다. 추후 로직으로 업데이트 될 예정입니다");
+        throw new CustomException(ErrorCode.KEYWORD_NOT_FOUND);
     }
 
 
