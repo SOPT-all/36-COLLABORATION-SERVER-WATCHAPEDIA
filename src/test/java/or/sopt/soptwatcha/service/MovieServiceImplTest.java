@@ -5,12 +5,11 @@ import or.sopt.soptwatcha.common.exception.ErrorCode;
 import or.sopt.soptwatcha.domain.*;
 import or.sopt.soptwatcha.domain.common.enums.Category;
 import or.sopt.soptwatcha.domain.common.enums.IsPositive;
-import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesListResponse;
-import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesResponse;
-import or.sopt.soptwatcha.dto.response.KeywordRecommendationGroupResponse;
+import or.sopt.soptwatcha.domain.common.enums.UpperCategory;
 import or.sopt.soptwatcha.repository.CommentKeywordRepository;
 import or.sopt.soptwatcha.repository.CommentRepository;
 import or.sopt.soptwatcha.repository.MovieKeywordRepository;
+import or.sopt.soptwatcha.repository.MovieRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -43,6 +41,9 @@ class MovieServiceImplTest {
     @Mock
     MovieKeywordRepository movieKeywordRepository;
 
+    @Mock
+    MovieRepository movieRepository;
+
     @InjectMocks
     MovieServiceImpl movieService;
 
@@ -51,7 +52,8 @@ class MovieServiceImplTest {
         movieService = Mockito.spy(new MovieServiceImpl(
                 commentRepository,
                 commentKeywordRepository,
-                movieKeywordRepository
+                movieKeywordRepository,
+                movieRepository
         ));
     }
 
