@@ -23,7 +23,7 @@ public class MovieDetailResponseDTO {
     private String engTitle;
     private List<String> genres;
     private Integer releaseYear;
-    private Integer runningTime;
+    private String runningTime;
     private Integer ageLimit;
     private String detail;
     private String posterImage;
@@ -56,13 +56,15 @@ public class MovieDetailResponseDTO {
                 .map(MovieImage::getImageLink)
                 .orElse(null);
 
+        String formattedRunningTime = formatRunningTime(movie.getRunningTime());
+
         return MovieDetailResponseDTO.builder()
                 .id(movie.getId())
                 .title(movie.getTitle())
                 .engTitle(movie.getEngTitle())
                 .genres(genreList)
                 .releaseYear(movie.getReleaseYear().getYear())
-                .runningTime(movie.getRunningTime())
+                .runningTime(formattedRunningTime)
                 .ageLimit(movie.getAgeLimit())
                 .detail(movie.getDetails())
                 .posterImage(posterImageUrl)
@@ -71,4 +73,18 @@ public class MovieDetailResponseDTO {
                 .artists(artistList)
                 .build();
     }
+
+    private static String formatRunningTime(int minutes) {
+        int hours = minutes / 60;
+        int remainingMinutes = minutes % 60;
+
+        if (hours > 0 && remainingMinutes > 0) {
+            return hours + "시간 " + remainingMinutes + "분";
+        } else if (hours > 0) {
+            return hours + "시간";
+        } else {
+            return remainingMinutes + "분";
+        }
+    }
+
 }
