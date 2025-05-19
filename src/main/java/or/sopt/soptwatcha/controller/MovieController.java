@@ -3,13 +3,11 @@ package or.sopt.soptwatcha.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import or.sopt.soptwatcha.dto.response.GetMovieSoonResponseDTO;
 import or.sopt.soptwatcha.dto.response.GetMovieTopRankingResponseDTO;
 import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesListResponse;
 import or.sopt.soptwatcha.service.MovieService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("")
@@ -34,5 +32,13 @@ public class MovieController {
     public GetMovieTopRankingResponseDTO.GetMovieTopRankingResponseListDTO getRankingMovies() {
 
         return movieService.getMovieTopRanking();
+    }
+
+
+    @GetMapping("posts/soon")
+    @Operation(summary = "개봉 예정작 조회 API")
+    public GetMovieSoonResponseDTO.GetMovieSoonResponseListDTO getSoonMovies(@RequestParam String movieType) {
+
+        return movieService.getSoon(movieType);
     }
 }
