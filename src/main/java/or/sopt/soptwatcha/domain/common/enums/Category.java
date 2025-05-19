@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Category {
-    MOVIE_KEYWORD("영화 사용되는 키워드"),
+    MOVIE_KEYWORD("영화에 사용되는 키워드"),
     COMMENT_KEYWORD("댓글에 사용되는 키워드");
 
     private final String description;

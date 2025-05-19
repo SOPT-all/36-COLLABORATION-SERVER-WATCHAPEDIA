@@ -5,9 +5,7 @@ import or.sopt.soptwatcha.common.exception.ErrorCode;
 import or.sopt.soptwatcha.domain.*;
 import or.sopt.soptwatcha.domain.common.enums.Category;
 import or.sopt.soptwatcha.domain.common.enums.IsPositive;
-import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesListResponse;
-import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesResponse;
-import or.sopt.soptwatcha.dto.response.KeywordRecommendationGroupResponse;
+import or.sopt.soptwatcha.domain.common.enums.UpperCategory;
 import or.sopt.soptwatcha.repository.CommentKeywordRepository;
 import or.sopt.soptwatcha.repository.CommentRepository;
 import or.sopt.soptwatcha.repository.MovieKeywordRepository;
@@ -18,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 

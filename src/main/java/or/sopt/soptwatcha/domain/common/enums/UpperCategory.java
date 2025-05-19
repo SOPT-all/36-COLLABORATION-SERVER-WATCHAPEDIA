@@ -1,4 +1,4 @@
-package or.sopt.soptwatcha.domain;
+package or.sopt.soptwatcha.domain.common.enums;
 
 import lombok.Getter;
 

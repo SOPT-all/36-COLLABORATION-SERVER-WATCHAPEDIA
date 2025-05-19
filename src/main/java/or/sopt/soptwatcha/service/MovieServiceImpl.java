@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 import or.sopt.soptwatcha.common.exception.CustomException;
 import or.sopt.soptwatcha.common.exception.ErrorCode;
 import or.sopt.soptwatcha.domain.*;
+import or.sopt.soptwatcha.domain.common.enums.Category;
 import or.sopt.soptwatcha.domain.common.enums.IsPositive;
 import or.sopt.soptwatcha.domain.common.enums.MovieImageType;
-import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesListResponse;
-import or.sopt.soptwatcha.dto.response.GetPreferenceMoviesResponse;
-import or.sopt.soptwatcha.dto.response.KeywordRecommendationGroupResponse;
-import or.sopt.soptwatcha.dto.response.KeywordResponseDTO;
+import or.sopt.soptwatcha.domain.common.enums.UpperCategory;
+import or.sopt.soptwatcha.dto.response.*;
 import or.sopt.soptwatcha.repository.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,6 +23,7 @@ public class MovieServiceImpl implements MovieService {
     private final CommentRepository commentRepository;
     private final CommentKeywordRepository commentKeywordRepository;
     private final MovieKeywordRepository movieKeywordRepository;
+    private final MovieRepository movieRepository;
 
 
     /**
@@ -101,6 +102,39 @@ public class MovieServiceImpl implements MovieService {
         }
 
         return GetPreferenceMoviesListResponse.of(groupedResult);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public GetMovieTopRankingResponseDTO.GetMovieTopRankingResponseListDTO getMovieTopRanking() {
+        List<Movie> top5MoviesByExpectScore = movieRepository.findTop5ByOrderByExpectScoreDesc();
+
+        List<GetMovieTopRankingResponseDTO> responseList = top5MoviesByExpectScore.stream()
+                .map(movie -> {
+                    // 1. 포스터 이미지 경로 추출
+                    String posterLink = movie.getMovieImages().stream()
+                            .filter(img -> img.getMovieImageType() == MovieImageType.POSTER)
+                            .findFirst()
+                            .map(MovieImage::getImageLink)
+                            .orElse(null);
+
+                    // 2. MOVIE_KEYWORD에 해당하는 키워드 리스트 추출
+                    List<String> movieKeywordValues = movie.getMovieKeywords().stream()
+                            .map(MovieKeyword::getKeyword)
+                            .filter(keyword -> keyword.getCategory() == Category.MOVIE_KEYWORD)
+                            .map(Keyword::getValue)
+                            .toList();
+
+                    // 3. DTO로 변환
+                    return GetMovieTopRankingResponseDTO.from(movie, posterLink, movieKeywordValues);
+                })
+                .toList();
+
+        // 최종 DTO로 한 번 더 감싸기
+        return GetMovieTopRankingResponseDTO.GetMovieTopRankingResponseListDTO.builder()
+                .result(responseList)
+                .build();
     }
 
 

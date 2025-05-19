@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import or.sopt.soptwatcha.domain.common.enums.Category;
 import or.sopt.soptwatcha.domain.common.enums.IsPositive;
+import or.sopt.soptwatcha.domain.common.enums.UpperCategory;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
