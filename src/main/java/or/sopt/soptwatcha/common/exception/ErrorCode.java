@@ -13,6 +13,9 @@ public enum ErrorCode {
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "잘못된.파라미터입니다."),
 
+    // 영화 관련 클라이언트 오류 - 400번대
+    MOVIE_NOT_FOUND(HttpStatus.NOT_FOUND, "영화를 찾을 수 없습니다"),
+
     // 코멘트 관련 클라이언트 오류 - 400번대
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"댓글을 찾을 수 없습니다"),
 
