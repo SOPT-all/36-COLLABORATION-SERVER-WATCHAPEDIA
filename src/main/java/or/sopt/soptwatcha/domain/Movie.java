@@ -34,9 +34,6 @@ public class Movie extends BaseEntity {
 
     private double score;
 
-    // 예상 별점 필드
-    private double expectScore;
-
     private int isWished;
 
     private String details;

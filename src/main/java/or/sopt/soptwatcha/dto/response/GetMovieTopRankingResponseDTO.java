@@ -28,7 +28,7 @@ public class GetMovieTopRankingResponseDTO {
         return GetMovieTopRankingResponseDTO.builder()
                 .movieImagePath(movieImagePaths)
                 .movieTitle(movie.getTitle())
-                .expectScore(movie.getExpectScore())
+                .expectScore(movie.getScore())
                 .movieKeywordList(keywords)
                 .build();
     }

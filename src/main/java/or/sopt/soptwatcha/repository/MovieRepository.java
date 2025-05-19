@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
-    List<Movie> findTop5ByOrderByExpectScoreDesc();
+    List<Movie> findTop5ByOrderByScoreDesc();
 
     @Query(
             value = "SELECT * FROM movie WHERE movie_type = :movieType " +

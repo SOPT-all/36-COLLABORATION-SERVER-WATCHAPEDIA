@@ -85,7 +85,7 @@ public class MovieServiceImpl implements MovieService {
     @Override
     @Transactional(readOnly = true)
     public GetMovieTopRankingResponseDTO.GetMovieTopRankingResponseListDTO getMovieTopRanking() {
-        List<Movie> top5MoviesByExpectScore = movieRepository.findTop5ByOrderByExpectScoreDesc();
+        List<Movie> top5MoviesByExpectScore = movieRepository.findTop5ByOrderByScoreDesc();
 
         List<GetMovieTopRankingResponseDTO> responseList = top5MoviesByExpectScore.stream()
                 .map(movie -> {
