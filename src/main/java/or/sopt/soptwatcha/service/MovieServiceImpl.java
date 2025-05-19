@@ -24,35 +24,9 @@ public class MovieServiceImpl implements MovieService {
 
     private final CommentRepository commentRepository;
     private final CommentKeywordRepository commentKeywordRepository;
-    private final MovieKeywordRepository movieKeywordRepository;
     private final MovieRepository movieRepository;
 
 
-    /**
-     * 1. 파라미터로 코멘트 식별자를 받아서
-     * 2. 해당 코멘트가 존재하는 키워드를 찾는다
-     * 3. 그리고 그 키워드들을
-     *  3-1. 긍정/부정으로 가르고 부정은 날려버림
-     *  3-2. 키워드 별로 우선순위를 책정함
-     *
-     * 아 이렇게 하면 안되는 것 같은데
-     * 이렇게 하는게 아니라 해당 키워드를 매핑하고 있는 코멘트를 전부 찾아서
-     * 그 코멘트가 달린 영화를 모두 찾아서
-     * 그 영화 중 다섯개를 리스트업 해야함
-     *
-     * 4. 그리고 그 키워드대로 Movie에 어떤게 매핑되어 있는지 찾아보고 상위 다섯개 리스트업 -> X
-     *  4-1. 이때 DTO 하나 쓰고
-     * 5. 그리고 그걸 전부 감싸서 반환
-     *  5-1. 이때 DTO 하나 더
-     *
-     * 그럼 필요한 repository가
-     *  1. commentRepository
-     *  2. commentKeywordRepository
-     *  3. keywordRepository
-     *  4. movieRepository
-     *  5. movieImageRepository
-     *  6. movieKeywordRepsoitory
-     * */
     @Override
     @Transactional(readOnly = true)
     public GetPreferenceMoviesListResponse getPreferenceMovies(Long commentId) {
