@@ -34,6 +34,7 @@ public class MovieServiceImpl implements MovieService {
     private final KeywordUtil keywordUtil;
 
 
+
     @Override
     @Transactional(readOnly = true)
     public MovieDetailResponseDTO getMovieDetail(Long movieId) {
