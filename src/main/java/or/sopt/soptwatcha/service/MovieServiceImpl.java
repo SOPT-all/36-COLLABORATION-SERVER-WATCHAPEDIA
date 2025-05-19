@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -159,7 +160,7 @@ public class MovieServiceImpl implements MovieService {
                             .orElse(null);
 
                     // 2. 개봉일까지 남은 일 수 계산
-                    int untilRelease = now.until(movie.getReleaseYear()).getDays();
+                    int untilRelease = (int) ChronoUnit.DAYS.between(now, movie.getReleaseYear());
 
                     // 3. DTO 변환
                     return GetMovieSoonResponseDTO.from(movie, posterLink, untilRelease);
