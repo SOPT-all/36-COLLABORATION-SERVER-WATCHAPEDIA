@@ -11,4 +11,6 @@ public interface CommentKeywordRepository extends JpaRepository<CommentKeyword, 
 
     List<CommentKeyword> findByComment(Comment comment);
     List<CommentKeyword> findByKeyword(Keyword keyword);
+
+    List<CommentKeyword> findByKeyword_Id(Long keywordId);
 }
