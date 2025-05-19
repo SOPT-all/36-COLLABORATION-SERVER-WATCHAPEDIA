@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface MovieService {
+
+    @Transactional(readOnly = true)
     GetPreferenceMoviesListResponse getPreferenceMovies(Long commentId);
 
     @Transactional(readOnly = true)
