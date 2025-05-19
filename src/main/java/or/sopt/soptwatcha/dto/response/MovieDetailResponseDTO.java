@@ -9,6 +9,7 @@ import or.sopt.soptwatcha.domain.MovieArtist;
 import or.sopt.soptwatcha.domain.MovieGenre;
 import or.sopt.soptwatcha.domain.MovieImage;
 import or.sopt.soptwatcha.domain.common.enums.MovieImageType;
+import or.sopt.soptwatcha.util.TimeFormatUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,15 +57,13 @@ public class MovieDetailResponseDTO {
                 .map(MovieImage::getImageLink)
                 .orElse(null);
 
-        String formattedRunningTime = formatRunningTime(movie.getRunningTime());
-
         return MovieDetailResponseDTO.builder()
                 .id(movie.getId())
                 .title(movie.getTitle())
                 .engTitle(movie.getEngTitle())
                 .genres(genreList)
                 .releaseYear(movie.getReleaseYear().getYear())
-                .runningTime(formattedRunningTime)
+                .runningTime(TimeFormatUtil.formatMinutesToHoursAndMinutes(movie.getRunningTime()))
                 .ageLimit(movie.getAgeLimit())
                 .detail(movie.getDetails())
                 .posterImage(posterImageUrl)
@@ -72,19 +71,6 @@ public class MovieDetailResponseDTO {
                 .country(movie.getFilmCountry().name())
                 .artists(artistList)
                 .build();
-    }
-
-    private static String formatRunningTime(int minutes) {
-        int hours = minutes / 60;
-        int remainingMinutes = minutes % 60;
-
-        if (hours > 0 && remainingMinutes > 0) {
-            return hours + "시간 " + remainingMinutes + "분";
-        } else if (hours > 0) {
-            return hours + "시간";
-        } else {
-            return remainingMinutes + "분";
-        }
     }
 
 }
