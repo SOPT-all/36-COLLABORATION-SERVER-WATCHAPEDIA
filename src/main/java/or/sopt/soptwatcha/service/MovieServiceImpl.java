@@ -98,6 +98,8 @@ public class MovieServiceImpl implements MovieService {
     }
 
 
+    @Override
+    @Transactional(readOnly = true)
     public GetPreferenceMoviesResponse.GetPreferenceMoviesResponseWrapper getPreferenceMoviesV2(Long commentId) {
 
 
