@@ -7,6 +7,8 @@ import or.sopt.soptwatcha.domain.common.enums.FilmCountry;
 import or.sopt.soptwatcha.domain.common.enums.MovieType;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -47,4 +49,10 @@ public class Movie extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "collection_id")
     private Collection collection;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+    private List<MovieImage> movieImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "movie",cascade = CascadeType.ALL)
+    private List<MovieKeyword> movieKeywords = new ArrayList<>();
 }
