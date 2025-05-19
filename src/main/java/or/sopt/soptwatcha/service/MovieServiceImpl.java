@@ -13,6 +13,7 @@ import or.sopt.soptwatcha.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,7 @@ public class MovieServiceImpl implements MovieService {
      *  6. movieKeywordRepsoitory
      * */
     @Override
+    @Transactional(readOnly = true)
     public GetPreferenceMoviesListResponse getPreferenceMovies(Long commentId) {
 
         Comment findComment = commentRepository.findById(commentId)
@@ -131,12 +133,44 @@ public class MovieServiceImpl implements MovieService {
                 })
                 .toList();
 
-        // 최종 DTO로 한 번 더 감싸기
+        // 4. 최종 DTO로 한 번 더 감싸기
         return GetMovieTopRankingResponseDTO.GetMovieTopRankingResponseListDTO.builder()
                 .result(responseList)
                 .build();
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public GetMovieSoonResponseDTO.GetMovieSoonResponseListDTO getSoon(String movieType) {
+
+        LocalDate now = LocalDate.now();
+
+        // 0. 무비 타입에 따른 영화 조회
+        List<Movie> top5ByClosestToDate = movieRepository.findTop5ByClosestToDateAndMovieType(now,movieType);
+
+        List<GetMovieSoonResponseDTO> responseList = top5ByClosestToDate.stream()
+                .map(movie -> {
+                    // 1. 포스터 이미지 경로 추출
+                    String posterLink = movie.getMovieImages().stream()
+                            .filter(img -> img.getMovieImageType() == MovieImageType.POSTER)
+                            .findFirst()
+                            .map(MovieImage::getImageLink)
+                            .orElse(null);
+
+                    // 2. 개봉일까지 남은 일 수 계산
+                    int untilRelease = now.until(movie.getReleaseYear()).getDays();
+
+                    // 3. DTO 변환
+                    return GetMovieSoonResponseDTO.from(movie, posterLink, untilRelease);
+                })
+                .toList();
+
+        // 4. 리스트 DTO로 감싸서 반환
+        return GetMovieSoonResponseDTO.GetMovieSoonResponseListDTO.builder()
+                .soons(responseList)
+                .build();
+    }
 
 
 

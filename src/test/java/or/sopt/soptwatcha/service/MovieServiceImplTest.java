@@ -9,6 +9,7 @@ import or.sopt.soptwatcha.domain.common.enums.UpperCategory;
 import or.sopt.soptwatcha.repository.CommentKeywordRepository;
 import or.sopt.soptwatcha.repository.CommentRepository;
 import or.sopt.soptwatcha.repository.MovieKeywordRepository;
+import or.sopt.soptwatcha.repository.MovieRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,9 @@ class MovieServiceImplTest {
     @Mock
     MovieKeywordRepository movieKeywordRepository;
 
+    @Mock
+    MovieRepository movieRepository;
+
     @InjectMocks
     MovieServiceImpl movieService;
 
@@ -48,7 +52,8 @@ class MovieServiceImplTest {
         movieService = Mockito.spy(new MovieServiceImpl(
                 commentRepository,
                 commentKeywordRepository,
-                movieKeywordRepository
+                movieKeywordRepository,
+                movieRepository
         ));
     }
 

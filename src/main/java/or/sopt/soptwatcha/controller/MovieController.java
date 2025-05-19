@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "영화 관련 API")
 public class MovieController {
 
+
     private final MovieService movieService;
 
 
@@ -26,6 +27,7 @@ public class MovieController {
 
         return movieService.getPreferenceMovies(commentId);
     }
+
 
     @GetMapping("posts/ranking")
     @Operation(summary = "내가 좋아할 만한 작품 랭킹 API")
