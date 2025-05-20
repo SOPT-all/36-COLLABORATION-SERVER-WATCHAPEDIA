@@ -21,4 +21,11 @@ public class CommentKeyword {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "keyword_id")
     private Keyword keyword;
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
+        if (comment != null && !comment.getCommentKeywords().contains(this)) {
+            comment.addCommentKeyword(this);
+        }
+    }
 }

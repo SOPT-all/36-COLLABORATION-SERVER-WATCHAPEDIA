@@ -39,6 +39,11 @@ public class Comment extends BaseEntity {
         if (this.commentKeywords == null) {
             this.commentKeywords = new ArrayList<>();
         }
-        this.commentKeywords.add(commentKeyword);
+        if (!this.commentKeywords.contains(commentKeyword)) {
+            this.commentKeywords.add(commentKeyword);
+            if (commentKeyword.getComment() != this) {
+                commentKeyword.setComment(this);
+            }
+        }
     }
 }
