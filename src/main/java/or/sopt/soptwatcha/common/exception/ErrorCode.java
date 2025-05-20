@@ -16,6 +16,10 @@ public enum ErrorCode {
     // 코멘트 관련 클라이언트 오류 - 400번대
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"댓글을 찾을 수 없습니다"),
 
+    KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND,"긍정키워드가 존재하지 않습니다"),
+
+    MOVIE_POSTER_NOT_FOUND(HttpStatus.NOT_FOUND,"영화 포스터 이미지를 찾을 수 없습니다"),
+
     // 서버 오류 - 500번대
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다.");
 
