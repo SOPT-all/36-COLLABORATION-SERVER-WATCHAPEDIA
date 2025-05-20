@@ -1,5 +1,7 @@
 package or.sopt.soptwatcha.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import or.sopt.soptwatcha.common.response.BaseResponse;
@@ -14,11 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/posts")
+@Tag(name = "댓글 관련 API")
 public class CommentController {
 
     private final CommentService commentService;
 
     @GetMapping("/{postId}/comments")
+    @Operation(summary = "코멘트 조회 API")
     public ResponseEntity<BaseResponse<CommentResponseDTO>> getTopLikedComment(@PathVariable("postId") Long movieId) {
         CommentResponseDTO responseDto = commentService.getTopLikedComment(movieId);
         return ResponseEntity.ok(BaseResponse.ok(responseDto));
@@ -26,6 +30,7 @@ public class CommentController {
     }
   
     @PostMapping("/{postId}/comments")
+    @Operation(summary = "코멘트 생성 API")
     public ResponseEntity<BaseResponse<CommentCreateResponseDTO>> createComment(
             @PathVariable Long postId,
             @RequestBody @Valid CommentCreateRequestDTO request) {

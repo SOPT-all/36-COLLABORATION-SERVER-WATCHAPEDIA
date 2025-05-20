@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/movie-image")
 @RequiredArgsConstructor
-@Tag(name = "영화 포스터 관련 API")
+@Tag(name = "영화 포스터 관련 API (테스트용 API 입니다)")
 public class MovieImageController {
 
     private final MovieImageServiceImpl movieImageService;
