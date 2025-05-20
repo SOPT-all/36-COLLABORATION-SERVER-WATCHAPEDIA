@@ -11,6 +11,7 @@ import or.sopt.soptwatcha.domain.Movie;
 import or.sopt.soptwatcha.domain.common.enums.Category;
 import or.sopt.soptwatcha.dto.request.CommentCreateRequestDTO;
 import or.sopt.soptwatcha.dto.response.CommentCreateResponseDTO;
+import or.sopt.soptwatcha.dto.response.CommentResponseDTO;
 import or.sopt.soptwatcha.repository.CommentKeywordRepository;
 import or.sopt.soptwatcha.repository.CommentRepository;
 import or.sopt.soptwatcha.repository.KeywordRepository;
@@ -31,6 +32,18 @@ public class CommentService {
     private final MovieRepository movieRepository;
     private final KeywordRepository keywordRepository;
     private final CommentKeywordRepository commentKeywordRepository;
+  
+    @Transactional(readOnly = true)
+    public CommentResponseDTO getTopLikedComment(Long movieId) {
+        if (!movieRepository.existsById(movieId)) {
+            throw new CustomException(ErrorCode.MOVIE_NOT_FOUND);
+        }
+
+        Comment comment = commentRepository.findTopByMovieIdOrderByLikeCountDesc(movieId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+
+        return CommentResponseDTO.of(comment);
+    }
 
     @Transactional
     public CommentCreateResponseDTO createComment(Long postId, CommentCreateRequestDTO request) {

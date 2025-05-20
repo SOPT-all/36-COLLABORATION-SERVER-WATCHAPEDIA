@@ -13,12 +13,17 @@ public enum ErrorCode {
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "잘못된.파라미터입니다."),
 
+    // 영화 관련 클라이언트 오류 - 400번대
     MOVIE_NOT_FOUND(HttpStatus.NOT_FOUND, "영화를 찾을 수 없습니다"),
 
     // 코멘트 관련 클라이언트 오류 - 400번대
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"댓글을 찾을 수 없습니다"),
     INVALID_KEYWORD_COUNT(HttpStatus.BAD_REQUEST, "키워드는 1-5개 사이로 선택해야 합니다"),
     INVALID_KEYWORD_CATEGORY(HttpStatus.BAD_REQUEST, "코멘트에 사용할 수 없는 키워드가 포함되어 있습니다"),
+
+    KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND,"긍정키워드가 존재하지 않습니다"),
+
+    MOVIE_POSTER_NOT_FOUND(HttpStatus.NOT_FOUND,"영화 포스터 이미지를 찾을 수 없습니다"),
 
     // 서버 오류 - 500번대
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다.");
