@@ -18,6 +18,8 @@ public enum ErrorCode {
 
     // 코멘트 관련 클라이언트 오류 - 400번대
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"댓글을 찾을 수 없습니다"),
+    INVALID_KEYWORD_COUNT(HttpStatus.BAD_REQUEST, "키워드는 1-5개 사이로 선택해야 합니다"),
+    INVALID_KEYWORD_CATEGORY(HttpStatus.BAD_REQUEST, "코멘트에 사용할 수 없는 키워드가 포함되어 있습니다"),
 
     KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND,"긍정키워드가 존재하지 않습니다"),
 
