@@ -8,6 +8,7 @@ import or.sopt.soptwatcha.domain.Movie;
 import or.sopt.soptwatcha.domain.MovieArtist;
 import or.sopt.soptwatcha.domain.MovieGenre;
 import or.sopt.soptwatcha.domain.MovieImage;
+import or.sopt.soptwatcha.domain.common.enums.Category;
 import or.sopt.soptwatcha.domain.common.enums.MovieImageType;
 import or.sopt.soptwatcha.util.TimeFormatUtil;
 
@@ -31,6 +32,7 @@ public class MovieDetailResponseDTO {
     private String detailImage;
     private String country;
     private List<ArtistResponseDTO> artists;
+    private List<String> keywords;
 
     public static MovieDetailResponseDTO from(Movie movie, 
                                              List<MovieGenre> movieGenres, 
@@ -57,6 +59,12 @@ public class MovieDetailResponseDTO {
                 .map(MovieImage::getImageLink)
                 .orElse(null);
 
+        List<String> keywordList = movie.getMovieKeywords().stream()
+                .map(movieKeyword -> movieKeyword.getKeyword())
+                .filter(keyword -> keyword.getCategory() == Category.MOVIE_KEYWORD)
+                .map(keyword -> keyword.getValue())
+                .collect(Collectors.toList());
+
         return MovieDetailResponseDTO.builder()
                 .id(movie.getId())
                 .title(movie.getTitle())
@@ -68,8 +76,9 @@ public class MovieDetailResponseDTO {
                 .detail(movie.getDetails())
                 .posterImage(posterImageUrl)
                 .detailImage(detailImageUrl)
-                .country(movie.getFilmCountry().name())
+                .country(movie.getFilmCountry().getDisplayName())
                 .artists(artistList)
+                .keywords(keywordList)
                 .build();
     }
 
