@@ -39,31 +39,13 @@ public class CommentService {
 
         List<Keyword> keywords = validateAndGetKeywords(request.getKeywordIds());
 
-        Comment comment = Comment.builder()
-                .movie(movie)
-                .review(request.getReview())
-                .score(0)
-                .likeCount(0)
-                .replyCount(0)
-                .build();
-        
+        List<CommentKeyword> commentKeywords = keywords.stream()
+                .map(CommentKeyword::createCommentKeyword)
+                .collect(Collectors.toList());
+
+        Comment comment = Comment.createCommentWithKeywords(movie, request.getReview(), commentKeywords);
+
         Comment savedComment = commentRepository.save(comment);
-
-        List<CommentKeyword> savedCommentKeywords = new ArrayList<>();
-        for (Keyword keyword : keywords) {
-            CommentKeyword commentKeyword = CommentKeyword.builder()
-                    .comment(savedComment)
-                    .keyword(keyword)
-                    .build();
-
-            // CommentKeyword 저장
-            commentKeywordRepository.save(commentKeyword);
-
-            // 저장된 CommentKeyword를 Comment에 추가
-            savedComment.addCommentKeyword(commentKeyword);
-            savedCommentKeywords.add(commentKeyword);
-        }
-
 
         List<String> keywordValues = keywords.stream()
                 .map(Keyword::getValue)

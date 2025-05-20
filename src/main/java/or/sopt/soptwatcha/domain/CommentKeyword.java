@@ -28,4 +28,10 @@ public class CommentKeyword {
             comment.addCommentKeyword(this);
         }
     }
+
+    public static CommentKeyword createCommentKeyword(Keyword keyword) {
+        return CommentKeyword.builder()
+                .keyword(keyword)
+                .build();
+    }
 }
