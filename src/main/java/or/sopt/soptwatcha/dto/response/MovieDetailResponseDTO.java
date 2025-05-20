@@ -76,7 +76,7 @@ public class MovieDetailResponseDTO {
                 .detail(movie.getDetails())
                 .posterImage(posterImageUrl)
                 .detailImage(detailImageUrl)
-                .country(movie.getFilmCountry().name())
+                .country(movie.getFilmCountry().getDisplayName())
                 .artists(artistList)
                 .keywords(keywordList)
                 .build();
