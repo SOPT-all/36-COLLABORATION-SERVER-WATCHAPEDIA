@@ -22,7 +22,7 @@ public class Comment extends BaseEntity {
 
     private String review;
 
-    private int score;
+    private double score;
 
     private int likeCount;
 
