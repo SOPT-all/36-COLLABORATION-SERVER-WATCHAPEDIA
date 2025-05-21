@@ -4,22 +4,24 @@ import jakarta.persistence.*;
 import lombok.*;
 import or.sopt.soptwatcha.domain.common.BaseEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
 @Builder
-public class Artist extends BaseEntity {
+public class ArtistImage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String imageLink;
 
-    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
-    private List<ArtistImage> artistImages = new ArrayList<>();
+    private String fileName;
+
+    private String imageName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "artist_id")
+    private Artist artist;
 }
