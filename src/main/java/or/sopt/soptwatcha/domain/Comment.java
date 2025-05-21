@@ -64,4 +64,5 @@ public class Comment extends BaseEntity {
         keywords.forEach(comment::addCommentKeyword);
         return comment;
     }
+
 }
