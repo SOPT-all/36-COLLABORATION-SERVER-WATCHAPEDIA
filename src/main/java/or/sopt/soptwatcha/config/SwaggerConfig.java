@@ -31,7 +31,7 @@ public class SwaggerConfig {
                         .bearerFormat("JWT"));
 
         return new OpenAPI()
-                .addServersItem(new Server().url("/"))
+                .addServersItem(new Server().url("/www.soptcha.shop"))
                 .info(info)
                 .addSecurityItem(securityRequirement)
                 .components(components);
