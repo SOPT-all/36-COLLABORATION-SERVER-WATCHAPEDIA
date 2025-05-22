@@ -29,7 +29,7 @@ public class CommentController {
 
     }
 
-    @CrossOrigin(origins = "*")
+
     @PostMapping("/{postId}/comments")
     @Operation(summary = "코멘트 생성 API")
     public ResponseEntity<BaseResponse<CommentCreateResponseDTO>> createComment(
