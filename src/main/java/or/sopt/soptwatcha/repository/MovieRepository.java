@@ -1,6 +1,7 @@
 package or.sopt.soptwatcha.repository;
 
 import or.sopt.soptwatcha.domain.Movie;
+import or.sopt.soptwatcha.domain.common.enums.MovieType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,14 +13,9 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     List<Movie> findTop5ByOrderByScoreDesc();
 
-    @Query(
-            value = "SELECT * FROM movie " +
-                    "WHERE movie_type = :movieType AND release_year >= :targetDate " +
-                    "ORDER BY DATEDIFF(release_year, :targetDate) ASC LIMIT 5",
-            nativeQuery = true
-    )
-    List<Movie> findTop5ByClosestToDateAndMovieType(@Param("targetDate") LocalDate targetDate,
-                                                    @Param("movieType") String movieType);
+    List<Movie> findTop5ByMovieTypeAndUploadYearGreaterThanEqualOrderByUploadYearAsc(MovieType movieType, LocalDate uploadYear);
+
+
 
 
 }
