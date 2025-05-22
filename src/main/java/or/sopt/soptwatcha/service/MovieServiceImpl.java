@@ -135,7 +135,6 @@ public class MovieServiceImpl implements MovieService {
     public GetMovieSoonResponseDTO.GetMovieSoonResponseListDTO getSoon(String movieType) {
 
         LocalDate now = LocalDate.now();
-        log.info("오늘날짜: "+now);
 
         MovieType movieType1 = MovieType.valueOf(movieType);
 
