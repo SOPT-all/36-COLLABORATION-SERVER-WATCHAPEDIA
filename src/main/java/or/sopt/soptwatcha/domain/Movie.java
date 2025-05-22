@@ -28,6 +28,8 @@ public class Movie extends BaseEntity {
 
     private LocalDate releaseYear;
 
+    private LocalDate uploadYear;
+
     private int runningTime;
 
     private int ageLimit;

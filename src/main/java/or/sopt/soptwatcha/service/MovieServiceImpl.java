@@ -1,27 +1,26 @@
 package or.sopt.soptwatcha.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import or.sopt.soptwatcha.common.exception.CustomException;
 import or.sopt.soptwatcha.common.exception.ErrorCode;
 import or.sopt.soptwatcha.domain.*;
 import or.sopt.soptwatcha.domain.common.enums.Category;
-import or.sopt.soptwatcha.domain.common.enums.IsPositive;
 import or.sopt.soptwatcha.domain.common.enums.MovieImageType;
-import or.sopt.soptwatcha.domain.common.enums.UpperCategory;
+import or.sopt.soptwatcha.domain.common.enums.MovieType;
 import or.sopt.soptwatcha.dto.response.*;
 import or.sopt.soptwatcha.repository.*;
 import or.sopt.soptwatcha.util.KeywordUtil;
-import or.sopt.soptwatcha.util.KeywordUtilImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MovieServiceImpl implements MovieService {
 
     private final CommentRepository commentRepository;
@@ -137,8 +136,10 @@ public class MovieServiceImpl implements MovieService {
 
         LocalDate now = LocalDate.now();
 
+        MovieType movieType1 = MovieType.valueOf(movieType);
+
         // 0. 무비 타입에 따른 영화 조회
-        List<Movie> top5ByClosestToDate = movieRepository.findTop5ByClosestToDateAndMovieType(now,movieType);
+        List<Movie> top5ByClosestToDate = movieRepository.findTop5ByMovieTypeAndUploadYearGreaterThanEqualOrderByUploadYearAsc(movieType1,now);
 
         List<GetMovieSoonResponseDTO> responseList = top5ByClosestToDate.stream()
                 .map(movie -> {
@@ -150,7 +151,7 @@ public class MovieServiceImpl implements MovieService {
                             .orElse(null);
 
                     // 2. 개봉일까지 남은 일 수 계산
-                    int untilRelease = (int) ChronoUnit.DAYS.between(now, movie.getReleaseYear());
+                    int untilRelease = (int) ChronoUnit.DAYS.between(now, movie.getUploadYear());
 
                     // 3. DTO 변환
                     return GetMovieSoonResponseDTO.from(movie, posterLink, untilRelease);
