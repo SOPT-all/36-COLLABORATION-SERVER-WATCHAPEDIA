@@ -5,20 +5,16 @@ import or.sopt.soptwatcha.common.exception.CustomException;
 import or.sopt.soptwatcha.common.exception.ErrorCode;
 import or.sopt.soptwatcha.domain.*;
 import or.sopt.soptwatcha.domain.common.enums.Category;
-import or.sopt.soptwatcha.domain.common.enums.IsPositive;
 import or.sopt.soptwatcha.domain.common.enums.MovieImageType;
-import or.sopt.soptwatcha.domain.common.enums.UpperCategory;
 import or.sopt.soptwatcha.dto.response.*;
 import or.sopt.soptwatcha.repository.*;
 import or.sopt.soptwatcha.util.KeywordUtil;
-import or.sopt.soptwatcha.util.KeywordUtilImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -136,6 +132,7 @@ public class MovieServiceImpl implements MovieService {
     public GetMovieSoonResponseDTO.GetMovieSoonResponseListDTO getSoon(String movieType) {
 
         LocalDate now = LocalDate.now();
+
 
         // 0. 무비 타입에 따른 영화 조회
         List<Movie> top5ByClosestToDate = movieRepository.findTop5ByClosestToDateAndMovieType(now,movieType);

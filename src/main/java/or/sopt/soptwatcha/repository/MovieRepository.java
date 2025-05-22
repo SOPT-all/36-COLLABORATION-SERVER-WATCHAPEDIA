@@ -13,11 +13,13 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     List<Movie> findTop5ByOrderByScoreDesc();
 
     @Query(
-            value = "SELECT * FROM movie WHERE movie_type = :movieType " +
-                    "ORDER BY ABS(DATEDIFF(release_year, :targetDate)) ASC LIMIT 5",
+            value = "SELECT * FROM movie " +
+                    "WHERE movie_type = :movieType AND release_year >= :targetDate " +
+                    "ORDER BY DATEDIFF(release_year, :targetDate) ASC LIMIT 5",
             nativeQuery = true
     )
     List<Movie> findTop5ByClosestToDateAndMovieType(@Param("targetDate") LocalDate targetDate,
                                                     @Param("movieType") String movieType);
+
 
 }
