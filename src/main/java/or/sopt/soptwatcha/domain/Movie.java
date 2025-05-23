@@ -28,6 +28,7 @@ public class Movie extends BaseEntity {
 
     private LocalDate releaseYear;
 
+    @Column(name = "upload_year")
     private LocalDate uploadYear;
 
     private int runningTime;
