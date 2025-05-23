@@ -139,9 +139,9 @@ public class MovieServiceImpl implements MovieService {
         MovieType movieType1 = MovieType.valueOf(movieType);
 
         // 0. 무비 타입에 따른 영화 조회
-        List<Movie> top6ByClosestToDate = movieRepository.findTop6ByMovieTypeAndUploadYearGreaterThanEqualOrderByUploadYearAsc(movieType1,now);
+        List<Movie> top5ByClosestToDate = movieRepository.findTop6ByMovieTypeAndUploadYearGreaterThanEqualOrderByUploadYearAsc(movieType1,now);
 
-        List<GetMovieSoonResponseDTO> responseList = top6ByClosestToDate.stream()
+        List<GetMovieSoonResponseDTO> responseList = top5ByClosestToDate.stream()
                 .map(movie -> {
                     // 1. 포스터 이미지 경로 추출
                     String posterLink = movie.getMovieImages().stream()
