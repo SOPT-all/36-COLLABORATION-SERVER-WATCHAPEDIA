@@ -86,7 +86,7 @@ public class MovieServiceImpl implements MovieService {
                     String description = keywordUtil.makeRankingDescription(keyword);
 
                     // description을 포함한 DTO로 정리하고 그것까지 포함한 리스트로 반환한다
-                    return GetPreferenceMoviesResponse.GetPreferenceMoviesGroupDTO.of(description,movies);
+                    return GetPreferenceMoviesResponse.GetPreferenceMoviesGroupDTO.of(description,movies,keyword);
                 })
                 .toList();
 

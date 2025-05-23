@@ -42,12 +42,14 @@ public class GetPreferenceMoviesResponse {
     @Builder
     public static class GetPreferenceMoviesGroupDTO {
         private String description;
+        private String keyword;
         private List<GetPreferenceMoviesResponse> movies;
 
-        public static GetPreferenceMoviesGroupDTO of(String description, List<GetPreferenceMoviesResponse> movies) {
+        public static GetPreferenceMoviesGroupDTO of(String description, List<GetPreferenceMoviesResponse> movies,Keyword keyword) {
 
             return GetPreferenceMoviesGroupDTO.builder()
                     .description(description)
+                    .keyword(keyword.getValue())
                     .movies(movies)
                     .build();
         }
